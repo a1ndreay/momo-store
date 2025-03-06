@@ -1,0 +1,78 @@
+include:
+  - template: Security/SAST.gitlab-ci.yml
+
+cache:
+  paths:
+  - ${CI_PROJECT_DIR}/.m2/repository
+
+variables:
+  VERSION: 1.0.${CI_PIPELINE_ID}
+
+stages:
+- build
+- test
+- release
+
+#TODO: заместо Kaniko executor для сборки контейнеров go лучше подойдёт ko https://ko.build/reference/ko_build/
+build:
+  stage: build
+  only:
+    changes:
+    - backend/**/*
+  image:
+    name: gcr.io/kaniko-project/executor:v1.9.0-debug
+    entrypoint: [""]
+  # https://github.com/GoogleContainerTools/kaniko?tab=readme-ov-file#pushing-to-jfrog-container-registry-or-to-jfrog-artifactory
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/backend"
+      --dockerfile "${CI_PROJECT_DIR}/backend/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}/backend:$CI_COMMIT_SHA"
+      --build-arg VERSION=$VERSION
+      --cache=true
+
+# generate test coverage
+code_quality:
+  stage: test
+  image: golang:alpine
+  script: 
+    - cd backend && go test -coverprofile=coverage.out ./...
+  artifacts:
+    paths:
+      - backend/coverage.out
+
+sonar:
+  stage: test
+  image: red6/docker-sonar-scanner:latest
+  # https://gitlab.com/gitlab-org/gitlab/-/issues/292470
+  variables:
+    GIT_STRATEGY: clone # clone entire repo instead of reusing workspace
+    GIT_DEPTH: 0 # avoid shallow clone to give sonar all the info it needs
+  script:
+    - sonar-scanner -Dsonar.projectBaseDir=backend -Dsonar.go.coverage.reportPaths=coverage.out -Dsonar.qualitygate.wait=true -Dsonar.projectVersion=$VERSION -Dsonar.host.url="$SONARQUBE_URL" -Dsonar.login="$SONAR_TOKEN"
+  # https://clck.ru/3GsuhN, https://clck.ru/3GstPe, https://docs.gitlab.com/ci/yaml/#needsartifacts
+  needs:
+    - job: code_quality
+      artifacts: true
+
+release:
+  stage: release
+  only:
+    changes:
+    - backend/**/*
+  variables:
+    GIT_STRATEGY: none
+  image:
+    name: gcr.io/go-containerregistry/crane:debug
+    entrypoint: [ "" ]
+  cache: [ ]
+  before_script:
+    - echo $CI_REGISTRY
+    - crane auth login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - crane tag $CI_REGISTRY_IMAGE/backend:$CI_COMMIT_SHA $VERSION
+    - crane tag $CI_REGISTRY_IMAGE/backend:$CI_COMMIT_SHA latest
+  needs:
+    job: sonar
+
+
