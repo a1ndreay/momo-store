@@ -15,3 +15,18 @@ NODE_ENV=production VUE_APP_API_URL=http://localhost:8081 npm run serve
 go run ./cmd/api
 go test -v ./... 
 ```
+
+## code quality 
+
+1. generate test coverage:
+```bash
+go test -coverprofile=coverage.out ./...
+``` 
+2. add sonarqube quality gate:
+```bash
+sonar-scanner -Dsonar.go.coverage.reportPaths=coverage.out -Dsonar.qualitygate.wait=true
+```
+
+## Container registry
+
+1. add Nexus container registry
