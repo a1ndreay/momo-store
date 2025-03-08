@@ -2,7 +2,7 @@ FROM node:16.20.0-alpine3.18 AS build
 WORKDIR /app
 COPY . .
 RUN npm install
-ARG NODE_ENV=production VUE_APP_API_URL=http://localhost:8080
+ARG NODE_ENV=production VUE_APP_API_URL=http://backend-momo-store:8081
 RUN npm run build
 
 FROM node:16.20.0-alpine3.18
