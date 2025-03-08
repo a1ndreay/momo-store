@@ -9,4 +9,4 @@ FROM node:16.20.0-alpine3.18
 WORKDIR /app
 COPY --from=build /app .
 EXPOSE 8080
-CMD ["npm", "run", "serve"]
+ENTRYPOINT ["npm", "run", "serve"]
