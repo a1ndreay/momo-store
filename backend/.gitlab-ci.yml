@@ -12,6 +12,7 @@ stages:
 - build
 - test
 - release
+- deploy
 
 #TODO: заместо Kaniko executor для сборки контейнеров go лучше подойдёт ko https://ko.build/reference/ko_build/
 build:
@@ -74,5 +75,19 @@ release:
     - crane tag $CI_REGISTRY_IMAGE/backend:$CI_COMMIT_SHA latest
   needs:
     job: sonar
+
+deploy:
+  stage: deploy
+  variables:
+    CHART_PROJECT_ID: ""
+  only:
+    changes:
+    - backend/**/*
+  script:
+    - curl --request POST \
+      --form token=${CHART_PROJECT_TRIGGER_TOKEN} \
+      --form ref=main \
+      --form variables[backend_target_version]="$VERSION" \
+      "${CHART_PROJECT_API_V4_URL}/projects/${CHART_PROJECT_ID}/trigger/pipeline"
 
 
