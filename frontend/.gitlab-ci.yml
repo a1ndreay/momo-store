@@ -8,6 +8,7 @@ variables:
 stages:
    - build
    - release
+   - deploy
 
 build:
   stage: build
@@ -41,3 +42,13 @@ release:
   script:
     - crane tag $CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHA $VERSION
     - crane tag $CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHA latest
+
+deploy:
+  stage: deploy
+  variables:
+    CHART_PROJECT_ID: ""
+  only:
+    changes:
+    - frontend/**/*
+  script:
+    - 'curl --request POST --form token=${CHART_PROJECT_TRIGGER_TOKEN} --form ref=main --form variables[frontend_target_version]="$VERSION" "${CHART_PROJECT_API_V4_URL}/projects/${CHART_PROJECT_ID}/trigger/pipeline"'

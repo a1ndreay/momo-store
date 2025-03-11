@@ -17,7 +17,7 @@
 Так же в репозитории с чартами необходимо создать специальный токен https://gitlab.praktikum-services.ru/help/ci/triggers/index
 (CI/CD->Pipeline trigger tokens->Add new token)
 Этот токен необходимо скопировать и добавить в секреты этого репозитория:
-"":"glptt-***"
+"CHART_PROJECT_TRIGGER_TOKEN":"glptt-***"
 
 ## Frontend
 
