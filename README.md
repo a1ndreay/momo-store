@@ -1,23 +1,21 @@
+## Настройка CD 
+
+На предыдущем этапе вы создалии пайплайн для сборки чартов и деплоя, надеюсь вы не забыли записать себе значения `CI_API_V4_URL`, `CI_PROJECT_ID` и `CHART_PROJECT_TRIGGER_TOKEN`. На этом этапе мы создадим пайплайн для сборки приложения (CI).
+
+1. Добавьте в секреты gitlab'a необходимые значения:
+|Ключ|Значение|Пояснение|
+|--- |---     |---      |
+|"CHART_PROJECT_API_V4_URL"|<CI_API_V4_URL>|значение из предыдущего шага|
+|"CHART_PROJECT_ID"|<CI_PROJECT_ID>|значение из предыдущего шага|
+|"CHART_PROJECT_TRIGGER_TOKEN"|<CHART_PROJECT_TRIGGER_TOKEN>|значение из предыдущего шага|
+|"SONAR_LOGIN"|| логин от sonar|
+|"SONARQUBE_URL"|https://sonarqube.praktikum-services.ru||
+|"SONAR_TOKEN"||получите токен на странице https://sonarqube.praktikum-services.ru/account/security/ |
+
+
 # Momo Store aka Пельменная №2
 
 <img width="900" alt="image" src="https://user-images.githubusercontent.com/9394918/167876466-2c530828-d658-4efe-9064-825626cc6db5.png">
-
-## Настройка CD 
-
-Перед настройкой CD необходимо создать в gitlab ещё один репозиторий с чартами, исходники репозитория можно найти по ссылке: https://gitlab.praktikum-services.ru/std-ext-011-46/momo-store-chart 
-В качестве деплой-мэнеджера был выбран helm., поэтому все задачи связанные с деплоем приложения делегированы в тот репозиторий.
-При создании репозитория с чартами автоматически запустится первый пайлайн, в логах первой джобы нужно найти значения для наших переменных, которые мы используем в этом проекте для подключения хуков. С помощью этого мы настроем процесс непрерывного развёртывания.
-Вот так могут выглядит в логах эти переменные:
-![alt text](image.png)
-
-Добавим их в секреты этого проекта (CI/CD->Variables):
-"CHART_PROJECT_ID":"9117"
-"CHART_PROJECT_API_V4_URL": "https://gitlab.praktikum-services.ru/api/v4"
-
-Так же в репозитории с чартами необходимо создать специальный токен https://gitlab.praktikum-services.ru/help/ci/triggers/index
-(CI/CD->Pipeline trigger tokens->Add new token)
-Этот токен необходимо скопировать и добавить в секреты этого репозитория:
-"CHART_PROJECT_TRIGGER_TOKEN":"glptt-***"
 
 ## Frontend
 
