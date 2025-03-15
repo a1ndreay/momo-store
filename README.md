@@ -12,6 +12,11 @@
 |"SONARQUBE_URL"|https://sonarqube.praktikum-services.ru||
 |"SONAR_TOKEN"||получите токен на странице https://sonarqube.praktikum-services.ru/account/security/ |
 
+2. На этом этапе CI/CD полностью настроены. После успешной сборки кода, будет триггерится пайплайн для деплоя чарта с новой версией бекенда или фронтенда. Deployment настроен ручным образом, для его запуска в репозитории с чартами перейдите на вкладку pipelines и запустите последний пайплайн с тегом 'trigger token':
+![alt text](image-1.png)
+
+3. Следуйте дальнейшим указаниям, которые найдёте в конце логов job с названием 'deploy' в репозитории с чартами.
+
 
 # Momo Store aka Пельменная №2
 
@@ -41,7 +46,3 @@ go test -coverprofile=coverage.out ./...
 ```bash
 sonar-scanner -Dsonar.go.coverage.reportPaths=coverage.out -Dsonar.qualitygate.wait=true
 ```
-
-## Container registry
-
-1. add Nexus container registry
