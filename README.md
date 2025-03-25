@@ -9,8 +9,8 @@
 |"CHART_PROJECT_ID"|<CI_PROJECT_ID>|значение из предыдущего шага|
 |"CHART_PROJECT_TRIGGER_TOKEN"|<CHART_PROJECT_TRIGGER_TOKEN>|значение из предыдущего шага|
 |"SONAR_LOGIN"|| логин от sonar|
-|"SONARQUBE_URL"|https://sonarqube.praktikum-services.ru||
-|"SONAR_TOKEN"||получите токен на странице https://sonarqube.praktikum-services.ru/account/security/ |
+|"SONARQUBE_URL"|****||
+|"SONAR_TOKEN"||получите токен на странице https://sonarqube.*****.ru/account/security/ |
 
 2. На этом этапе CI/CD полностью настроены. После успешной сборки кода, будет триггерится пайплайн для деплоя чарта с новой версией бекенда или фронтенда. Deployment настроен ручным образом, для его запуска в репозитории с чартами перейдите на вкладку pipelines и запустите последний пайплайн с тегом 'trigger token':
 ![alt text](image-1.png)
